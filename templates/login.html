@@ -7,7 +7,7 @@
         {{ form.hidden_tag() }}
         <p>
             {{ form.login_email.label }}<br>
-            {{ form.login_email(class="form-control", type="email") }}<br>
+            {{ form.login_email(class="form-control") }}<br>
             {% for error in form.login_email.errors %}
                 <div class="alert alert-danger" role="alert">
                     {{ error }}
