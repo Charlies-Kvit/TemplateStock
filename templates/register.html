@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="center">Регистрация</h1>
+<h1 class="center">{{heading_h1}}</h1>
 <div class="main_tables">
 <form action="" method="post">
     {{ form.hidden_tag() }}
@@ -40,15 +40,7 @@
             </p>
         {% endfor %}
     </p>
-    <p>
-        {{ form.age.label }}<br>
-        {{ form.age(class="form-control") }}<br>
-        {% for error in form.age.errors %}
-            <p class="alert alert-danger" role="alert">
-                {{ error }}
-            </p>
-        {% endfor %}
-    </p>
+    {% if get_password %}
     <p>
         {{ form.password.label }}<br>
         {{ form.password(class="form-control", type="password") }}<br>
@@ -67,6 +59,7 @@
             </p>
         {% endfor %}
     </p>
+    {% endif %}
     <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
     {{message}}
 </form>

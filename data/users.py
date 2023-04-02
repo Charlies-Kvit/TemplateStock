@@ -15,7 +15,7 @@ class User(SqlAlchemyBase, UserMixin):
     email = sqlalchemy.Column(sqlalchemy.String, unique=True)
     surname = sqlalchemy.Column(sqlalchemy.String)
     name = sqlalchemy.Column(sqlalchemy.String)
-    age = sqlalchemy.Column(sqlalchemy.Integer)
+    # birth_data = sqlalchemy.Column(sqlalchemy.Da)
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     date_create = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
     date_change = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
