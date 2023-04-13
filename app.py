@@ -91,6 +91,7 @@ def menu():
 
 
 @app.route('/change_data', methods=['GET', 'POST'])
+@login_required
 def change_data():
     title = 'Изменить данные аккаунта'
     heading_h1 = "Изменить данные аккаунта"
@@ -126,7 +127,7 @@ def change_data():
         user.date_change = datetime.datetime.now()
         db_sess.commit()
         db_sess.close()
-        return render_template("")
+        return "render_template("")"
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     db_sess.close()
