@@ -19,4 +19,3 @@ class Posts(SqlAlchemyBase, UserMixin):
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("users.id"))
     user = orm.relationship('User')
-    news = orm.relationship("Posts", back_populates='user')
