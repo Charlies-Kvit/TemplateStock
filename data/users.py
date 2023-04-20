@@ -19,7 +19,7 @@ class User(SqlAlchemyBase, UserMixin):
     hashed_password = sqlalchemy.Column(sqlalchemy.String)
     date_create = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
     date_change = sqlalchemy.Column(sqlalchemy.DateTime, default=datetime.datetime.now())
-
+    
     post = orm.relationship("Post", back_populates='user')
 
     def set_password(self, password):
