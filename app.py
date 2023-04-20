@@ -57,6 +57,11 @@ def register():
                            get_password=True, form=form)
 
 
+# @app.route('/u/<userid>')
+# def userpage(userid):
+#     return render_template('user_page.html')
+
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     # форма входа
@@ -91,7 +96,6 @@ def menu():
 
 
 @app.route('/change_data', methods=['GET', 'POST'])
-@login_required
 def change_data():
     title = 'Изменить данные аккаунта'
     heading_h1 = "Изменить данные аккаунта"
@@ -127,7 +131,7 @@ def change_data():
         user.date_change = datetime.datetime.now()
         db_sess.commit()
         db_sess.close()
-        return "render_template("")"
+        return render_template("")
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     db_sess.close()
@@ -162,3 +166,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
