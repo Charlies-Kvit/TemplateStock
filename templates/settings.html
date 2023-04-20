@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="heading">Изменить данные аккаунта</h1>
+<div class="main_tables">
+    <div class="setting-avatar row g-3">
+        <p class="label" style="font-size: 20px; text-align: center;">Выбрать аватар</p>
+        <div class="avatar" style="width: 250px; height: 250px;">
+
+        </div>
+        <button type="button" class="btn btn-outline-secondary">Удалить</button>
+        <button type="button" class="btn btn-outline-secondary">Загрузить изображение</button>
+    </div>
+    <form class="register-form row g-3" action="" method="POST" style="padding: 15px; border-bottom-left-radius: 0;">
+        {{ form.hidden_tag() }}
+        <div class="col-md-6">
+              <p class="label">Логин</p>
+              {{ form.login(class="form-control", placeholder="Логин") }}
+              {% for error in form.login.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        <div class="col-md-6">
+              <p class="label">Email</p>
+              {{ form.email(type="email", class="form-control", placeholder="Email") }}
+              {% for error in form.email.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        <div class="col-12">
+              <p class="label">Имя</p>
+              {{ form.name(class="form-control", placeholder="Имя") }}
+              {% for error in form.name.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        <div class="col-12">
+              <p class="label">Фамилия</p>
+              {{ form.surname(class="form-control", placeholder="Фамилия") }}
+              {% for error in form.surname.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        {% if get_password %}
+        <div class="col-md-6">
+              <p class="label">Пароль</p>
+              {{ form.password(class="form-control", type="password", placeholder="Пароль") }}
+              {% for error in form.password.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        <div class="col-md-6">
+              <p class="label">Повторите пароль</p>
+              {{ form.password_again(class="form-control", type="password", placeholder="Повторите пароль") }}
+              {% for error in form.password_again.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+              {% endfor %}
+        </div>
+        {% endif %}
+        {{ form.submit(type="submit", class="btn btn-outline-dark submit-btn") }}
+    </form>
+</div>
+{% endblock %}

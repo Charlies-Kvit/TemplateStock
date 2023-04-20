@@ -1,10 +1,8 @@
-.main-header {
-    display: flex;
-    flex-direction: row;
-    padding-top: 10px;
-    padding-left: 50px;
-    background-color: green;
+body {
+    background-color: #f0f0f0;
+    font-family: 'Comfortaa', cursive;
 }
+
 .nav_p {
     padding-right: 50px;
     padding-left: 250%;
@@ -14,4 +12,133 @@
 .main-link {
     color: black;
     text-decoration: none;
+}
+
+.navbar-brand {
+    color: #82898f;
+}
+
+.navbar-brand:hover {
+    color: #82898f;
+}
+
+.nav-link {
+    color: white;
+    border-radius: 5px;
+}
+
+header .nav-link:hover {
+    color: white;
+    background-color: #6c757d;
+}
+
+footer .nav-link:hover {
+    color: #6c757d;
+}
+
+form {
+    width: 50%;
+}
+
+.menu-btn {
+    display: flex;
+    justify-content: center;
+}
+
+#navbarSupportedContent {
+    justify-content: space-between;
+}
+
+.navbar-text {
+    color: #6c757d;
+}
+
+.logo {
+    font-size: 15pt;
+}
+
+main {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.main_tables {
+    display: flex;
+    justify-content: center;
+    width: 60%;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: #e3e6e8;
+    padding: 0 10px 10px 10px;
+}
+
+.register-form {
+    display: flex;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+    background-color: #e3e6e8;
+    padding: 0 10px 10px 10px;
+}
+
+.heading {
+    margin: 16px;
+    text-align: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    background-color: #e3e6e8;
+    padding: 10px;
+    border-bottom: 1px solid #6c757d;
+}
+
+.label {
+    text-align: left;
+    margin: 0;
+}
+
+.check {
+    display: flex;
+    justify-content: center;
+}
+
+.form-check-label {
+    padding-left: 5px;
+    margin: 0;
+}
+
+.avatar {
+    background-color: grey;
+    border-radius: 50%;
+}
+
+.nav-avatar:hover {
+    border: 5px solid #c2c2c2;
+}
+
+.setting-avatar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    background-color: #e3e6e8;
+    border-right: 1px solid #6c757d;
+    margin-right: 8px;
+    padding: 15px;
+    border-bottom-left-radius: 10px;
+}
+
+.setting-avatar div{
+    margin-bottom: 10px;
+}
+
+.setting-avatar button{
+    margin: 5px 0;
+    width: 100%;
 }

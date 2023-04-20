@@ -1,31 +1,41 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1 class="center">{{heading_h1}}</h1>
+<h1 class="heading">Авторизация</h1>
 <div class="main_tables">
-    <form action="" method="post">
+    <form action="" method="POST" class="login-form row g-3">
         {{ form.hidden_tag() }}
-        <p>
-            {{ form.login_email.label }}<br>
-            {{ form.login_email(class="form-control") }}<br>
+        <div class="col-12">
+            <p class="label">Email</p>
+            {{ form.login_email(class="form-control", type="email", placeholder="Email") }}
             {% for error in form.login_email.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
-        </p>
-        <p>
-            {{ form.password.label }}<br>
-            {{ form.password(class="form-control", type="password") }}<br>
+              <div class="alert alert-danger" role="alert">
+                  {{ error }}
+              </div>
+          {% endfor %}
+        </div>
+        <div class="col-12">
+            <p class="label">Пароль</p>
+            {{ form.password(class="form-control", type="password", placeholder="Пароль") }}
             {% for error in form.password.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-            {% endfor %}
-        </p>
-        <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
-        <p>{{ form.submit(type="submit", class="btn btn-primary") }}</p>
+               <div class="alert alert-danger" role="alert">
+                   {{ error }}
+               </div>
+              {% endfor %}
+        </div>
+        <div class="col-12" style="display: flex;">
+              {{ form.remember_me() }}
+              <p class="form-check-label">
+                Запомнить меня
+              </p>
+        </div>
+        {{ form.submit(type="submit", class="btn btn-outline-dark login-btn") }}
         <div>{{ message }}</div>
+
+        <div style="display: flex; justify-content: space-between;">
+            <a class="link-secondary link-underline-dark link-offset-1" href="#">Забыли пароль?</a>
+            <a class="link-secondary link-underline-dark link-offset-1" href="register">Нет аккаунта? Создать...</a>
+        </div>
     </form>
 </div>
 {% endblock %}
