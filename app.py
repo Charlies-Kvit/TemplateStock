@@ -5,6 +5,7 @@ from flask_login import LoginManager, login_user, login_required, logout_user, c
 from data import db_session
 from data.users import User
 from data.user_resource import UsersResource, UsersListResource
+import requests
 import datetime
 
 # Инициализация веб приложения
@@ -44,7 +45,13 @@ def register():
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
                                    form=form, message='Такая почта уже занята!')
-        user = User(
+        db_sess.close()
+        response = requests.post('http://127.0.0.1:8080/api/users', json={'login': form.login.data,
+                                                                          'email': form.email.data,
+                                                                          'surname': form.surname.data,
+                                                                          'name': form.surname.data,
+                                                                          'password': form.password.data})
+        """user = User(
             login=form.login.data,
             email=form.email.data,
             surname=form.surname.data,
@@ -53,7 +60,7 @@ def register():
         user.set_password(form.password.data)
         db_sess.add(user)
         db_sess.commit()
-        db_sess.close()
+        db_sess.close()"""
         return redirect('/login')
     db_sess.close()
     return render_template('register.html', title=title, get_nav=False, heading_h1=heading_h1,
@@ -81,6 +88,7 @@ def login():
             login_user(user, remember=form.remember_me.data)
             db_sess.close()
             return redirect('/menu')
+        db_sess.close()
         return render_template('login.html',
                                get_nav=False,
                                title=title,
@@ -113,6 +121,7 @@ def change_data():
             form.email.data = user.email
             form.surname.data = user.surname
             form.name.data = user.name
+            db_sess.close()
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
                                    form=form, message='Такой логин уже занят!')
@@ -123,18 +132,23 @@ def change_data():
             form.email.data = user.email
             form.surname.data = user.surname
             form.name.data = user.name
+            db_sess.close()
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
                                    form=form, message='Такая почта уже занята!')
-        user = db_sess.query(User).filter(User.id == current_user.id).first()
+        db_sess.close()
+        response = requests.put(f'http://127.0.0.1:8080/api/users/{current_user.id}',
+                                json={'name': form.name.data, 'surname': form.surname.data, 'email': form.email.data,
+                                      'login': form.login.data})
+        """user = db_sess.query(User).filter(User.id == current_user.id).first()
         user.name = form.name.data
         user.surname = form.surname.data
         user.email = form.email.data
         user.login = form.login.data
         user.date_change = datetime.datetime.now()
         db_sess.commit()
-        db_sess.close()
-        return render_template("")
+        db_sess.close()"""
+        return response.json()  # Фронтендер, переделай так, чтоб красиво показать пользователю, что все ОК
     db_sess = db_session.create_session()
     user = db_sess.query(User).filter(User.id == current_user.id).first()
     db_sess.close()
@@ -158,7 +172,9 @@ def logout():
 def load_user(user_id):
     # загружает пользователя
     db_sess = db_session.create_session()
-    return db_sess.query(User).get(user_id)
+    user = db_sess.query(User).get(user_id)
+    db_sess.close()
+    return user
 
 
 def main():

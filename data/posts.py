@@ -2,9 +2,10 @@ import datetime
 import sqlalchemy
 from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
+from sqlalchemy_serializer import SerializerMixin
 
 
-class Post(SqlAlchemyBase):
+class Post(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'post'
 
     id = sqlalchemy.Column(sqlalchemy.Integer,

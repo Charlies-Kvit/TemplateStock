@@ -6,8 +6,8 @@
     <form action="" method="POST" class="login-form row g-3">
         {{ form.hidden_tag() }}
         <div class="col-12">
-            <p class="label">Email</p>
-            {{ form.login_email(class="form-control", type="email", placeholder="Email") }}
+            <p class="label">Email или логин</p>
+            {{ form.login_email(class="form-control", type="email", placeholder="Email или логин") }}
             {% for error in form.login_email.errors %}
               <div class="alert alert-danger" role="alert">
                   {{ error }}
