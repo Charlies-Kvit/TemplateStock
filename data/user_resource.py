@@ -75,7 +75,7 @@ class UsersListResource(Resource):
             login=args['login'],
             email=args['email'],
             surname=args['surname'],
-            name=args['name'],
+            name=args['name']
         )
         user.set_password(args['password'])
         db_sess.add(user)

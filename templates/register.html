@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1 class="heading">Регистрация</h1>
+<h1 class="heading">{{ heading_h1 }}</h1>
 <div class="main_tables">
     <form class="register-form row g-3" action="" method="POST">
         {{ form.hidden_tag() }}
@@ -63,10 +63,11 @@
         {% endif %}
         {{ form.submit(type="submit", class="btn btn-outline-dark submit-btn") }}
         <div>{{ message }}</div>
-
+        {% if footer_register %}
         <div style="display: flex; justify-content: space-between;">
             <a class="link-secondary link-underline-dark link-offset-1" href="login">Уже есть аккаунт? Войти...</a>
         </div>
+        {% endif %}
     </form>
 </div>
 {% endblock %}
