@@ -8,36 +8,82 @@
 ## Документация по API
 ### Что касается пользователей:
 #### Для получения данных всех пользователей:
-```
+```text
 GET
-http://127.0.0.1:8080/api/users
+http://URL/api/users
 ```
 #### Для получения данных одного пользователя:
-```
+```text
 GET
-http://127.0.0.1:8080/api/users/<id>
+http://URL/api/users/<id>
 ```
 #### Для добавления данных нового пользователя:
 POST запрос должен содержать json!!!
-```
+```text
 POST
-http://127.0.0.1:8080/api/users
-json:
-{'login': your_login, 'email': your_email, 'surname': your_surname, 
- 'name': your_name, 'password': your_password}
+http://URL/api/users
 ```
-#### Для изменения данных одного пользователя:
+JSON:
+```json
+{"login": "your_login", "email": "your_email", "surname": "your_surname", 
+ "name": "your_name", "password": "your_password"}
+```
+Все поля обязательны!!!
+#### Для изменения данных пользователя:
 PUT запрос должен содержать json!!!
-```
+```text
 PUT
-http://127.0.0.1:8080/api/users
-json:
-{'login': your_login, 'email': your_email, 'surname': your_surname, 
- 'name': your_name}
+http://URL/api/users
 ```
+JSON:
+```json
+{"login": "your_login", "email": "your_email", "surname": "your_surname", 
+ "name": "your_name"}
+```
+Все поля обязательны!!!
 #### Для удаления пользователя:
-```
+```text
 DELETE
-http://127.0.0.1:8080/api/users/<id>
+http://URL/api/users/<id>
 ```
-Пока что все. Для постов API будет совсем скоро)
+### Теперь что касается постов:
+#### Для получения данных всех постов:
+```text
+GET
+http://URL/api/posts
+```
+#### Для получения данных одного пользователя:
+```text
+GET
+http://URL/api/post/<id>
+```
+#### Для добавления нового поста:
+POST запрос должен содержать json!!!
+```text
+POST
+http://URL/api/posts
+```
+JSON:
+```json
+{"title": "your_title", "content": "your_content", "is_private":  "True or False",
+"user_id": "id of the user who created the post"}
+```
+Все поля обязательны!!!
+#### Для изменения данных поста:
+PUT запрос должен содержать json!!!
+```text
+PUT
+http://URL/api/posts/<id>
+```
+JSON:
+```json
+{"title": "your_title", "content": "your_content", "is_private":  "True or False"}
+```
+Все поля обязательны!!!
+#### Для удаления поста:
+```text
+DELETE
+http://URL/api/posts/<id>
+```
+---
+Это все, что касается работы с api на данный момент.

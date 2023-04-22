@@ -13,12 +13,12 @@ parser.add_argument('name', required=True)
 parser.add_argument('password')
 
 
-def abort_if_user_not_found(users_id):
+def abort_if_user_not_found(user_id):
     session = db_session.create_session()
-    users = session.query(User).get(users_id)
+    users = session.query(User).get(user_id)
     session.close()
     if not users:
-        abort(404, f"User {users_id} not found")
+        abort(404, f"User {user_id} not found")
 
 
 class UsersResource(Resource):

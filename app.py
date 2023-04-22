@@ -1,12 +1,13 @@
 from flask import Flask, render_template, redirect, request
+from waitress import serve
 from forms.user import RegisterForm, LoginForm
 from flask_restful import Api
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User
 from data.user_resource import UsersResource, UsersListResource
+from data.post_resource import PostsResource, PostsListResource
 import requests
-import datetime
 
 # Инициализация веб приложения
 app = Flask(__name__)
@@ -182,7 +183,10 @@ def main():
     db_session.global_init('db/db.sqlite')
     api.add_resource(UsersResource, '/api/users/<int:user_id>')
     api.add_resource(UsersListResource, '/api/users')
+    api.add_resource(PostsResource, '/api/posts/<int:post_id>')
+    api.add_resource(PostsListResource, '/api/posts')
     app.run(host='127.0.0.1', port=8080, debug=True)
+    # serve(app, host='0.0.0.0', port=5000) Потом раскомментировать перед выпуском в мир
 
 
 if __name__ == '__main__':
