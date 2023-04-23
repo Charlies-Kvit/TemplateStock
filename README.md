@@ -13,6 +13,7 @@
 1. Для начала склонируйте проект: ```git clone https://github.com/Charlies-Kvit/Flask-project```
 2. Затем установите все нужные библиотеки: ```pip install -r requirement.txt```
 3. Запустите app.py либо в среде разработки, либо командой:  ```python3 app.py```
+
 Если хотите, можете это сделать в виртуальной среде, но с этим разбирайтесь [здесь](https://python.ivan-shamaev.ru/python-virtual-env-packages-virtualenv-venv-requirements-txt/#:~:text=Venv%20%2D%D1%8D%D1%82%D0%BE%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%2C%20%D0%BF%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BB%D1%8F%D0%B5%D0%BC%D1%8B%D0%B9%20%D1%81,%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%D0%BE%D0%B2%2C%20%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B2%20%D0%B4%D1%80%D1%83%D0%B3%D0%B8%D1%85%20%D1%81%D1%80%D0%B5%D0%B4%D0%B0%D1%85).
 
 Всё!
