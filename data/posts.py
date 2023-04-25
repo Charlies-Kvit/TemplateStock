@@ -4,6 +4,7 @@ from sqlalchemy import orm
 from .db_session import SqlAlchemyBase
 from sqlalchemy_serializer import SerializerMixin
 
+#current_user
 
 class Post(SqlAlchemyBase, SerializerMixin):
     __tablename__ = 'post'
@@ -14,8 +15,8 @@ class Post(SqlAlchemyBase, SerializerMixin):
     content = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     created_date = sqlalchemy.Column(sqlalchemy.DateTime,
                                      default=datetime.datetime.now)
-    is_private = sqlalchemy.Column(sqlalchemy.Boolean, default=True)
-
+    img = sqlalchemy.Column(sqlalchemy.String, nullable=True)
+    tags = sqlalchemy.Column(sqlalchemy.String, nullable=True)
     user_id = sqlalchemy.Column(sqlalchemy.Integer,
                                 sqlalchemy.ForeignKey("users.id"))
     user = orm.relationship('User')

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form action="" method="POST">
+    <p>title</p>
+    <input type="text" name="title" id="title">
+    <p>content</p>
+    <input type="text" name="content" id="content">
+    <p>img</p>
+    <input type="text" name="img" id="img">
+    <p>tags (;)</p>
+    <input type="text" name="tags" id="tags">
+    <p>is private</p>
+    <button type="submit">submit post</button>
+</form>
+
+{% endblock %}

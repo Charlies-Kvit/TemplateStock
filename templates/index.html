@@ -2,4 +2,14 @@
 
 {% block content %}
 
+{% for a in args %}
+    <div>
+        <h1>{{ a.title }}</h1>
+        <p>{{ a.user }}, {{ a.created_date }}</p>
+        <img src="{{ a.img }}" alt="asd">
+        <p>{{ a.tags }}</p>
+        <p>{{ a.content }}</p>
+    </div>
+{% endfor %}
+
 {% endblock %}

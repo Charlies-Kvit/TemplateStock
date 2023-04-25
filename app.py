@@ -1,3 +1,4 @@
+import flask
 from flask import Flask, render_template, redirect, request
 from waitress import serve
 from forms.user import RegisterForm, LoginForm
@@ -5,6 +6,7 @@ from flask_restful import Api
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User
+from data.posts import Post
 from data.user_resource import UsersResource, UsersListResource
 from data.post_resource import PostsResource, PostsListResource
 import requests
@@ -21,7 +23,10 @@ app.config['SECRET_KEY'] = 'test_key'  # Потом изменить!!!
 def index():
     # Главная страница
     heading_h1 = "Меню"
-    return render_template('index.html', title='Главная страница', get_nav=True, current_user=current_user)
+    posts = requests.get(f'http://localhost:8080/api/posts').json()
+    print(posts)
+    return render_template('index.html', title='Главная страница', get_nav=True, current_user=current_user,
+                           args=reversed(posts['posts']))
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -62,9 +67,7 @@ def register():
                            get_password=True, form=form, footer_register=True)
 
 
-# @app.route('/u/<userid>')
-# def userpage(userid):
-#     return render_template('user_page.html')
+
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -99,6 +102,30 @@ def menu():
     title = 'Меню'
     heading_h1 = "Меню"
     return render_template('menu.html', title=title, user=current_user, get_nav=True, heading_h1=heading_h1)
+
+
+@app.route('/addpost', methods=['GET', 'POST'])
+@login_required
+def addpost():
+    if flask.request.method =='GET':
+        return render_template('addpost.html')
+    elif flask.request.method == "POST":
+        print(flask.request.values.get('img'), flask.request.values.get('tags'))
+        requests.post('http://127.0.0.1:8080/api/posts', json={'title': flask.request.values.get('title'),
+                                                               'content': flask.request.values.get('content'),
+                                                               'img': flask.request.values.get('img'),
+                                                               'tags': flask.request.values.get('tags'),
+                                                               'user': current_user.name,
+                                                               'user_id': current_user.id})
+        return redirect(f'/')
+
+
+@app.route('/p/<s>')
+def ppost(s):
+    posts = requests.get(f'http://localhost:8080/api/posts/{s}').json()
+    print(posts)
+    return render_template('postt.html', a=posts['post'])
+
 
 
 @app.route('/change_data', methods=['GET', 'POST'])
