@@ -6,4 +6,5 @@ WTForms~=3.0.1
 flask_wtf
 requests~=2.28.2
 waitress~=2.1.2
+flask_restful
 sqlalchemy_serializer

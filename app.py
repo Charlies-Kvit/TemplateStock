@@ -40,7 +40,7 @@ def register():
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
                                    form=form, message='Пароли не совпадают', footer_register=True)
-        response = requests.get('http://localhost:8080/api/users').json()
+        response = requests.get('http://localhost:5000/api/users').json()
         logins, emails = False, False
         for user in response['users']:
             if form.login.data == user['login']:
@@ -57,10 +57,10 @@ def register():
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
                                    form=form, message='Такая почта уже занята!', footer_register=True)
-        requests.post('http://127.0.0.1:8080/api/users', json={'login': form.login.data,
+        requests.post('http://127.0.0.1:5000/api/users', json={'login': form.login.data,
                                                                'email': form.email.data,
                                                                'surname': form.surname.data,
-                                                               'name': form.surname.data,
+                                                               'name': form.name.data,
                                                                'password': form.password.data})
         return redirect('/login')
     return render_template('register.html', title=title, get_nav=False, heading_h1=heading_h1,
@@ -135,7 +135,7 @@ def change_data():
     form = RegisterForm()
     form.submit.label.text = 'Изменить'
     if form.validate_on_submit() or request.method == 'POST':
-        response = requests.get('http://localhost:8080/api/users').json()
+        response = requests.get('http://localhost:5000/api/users').json()
         logins, emails = False, False
         for user in response['users']:
             if user['id'] == current_user.id:
@@ -147,7 +147,7 @@ def change_data():
                 logins = True
                 break
         if logins:
-            user = requests.get(f'http://loaclhost:8080/api/users/{current_user.id}').json()['user']
+            user = requests.get(f'http://loaclhost:5000/api/users/{current_user.id}').json()['user']
             form.login.data = user['login']
             form.email.data = user['email']
             form.surname.data = user['surname']
@@ -156,7 +156,7 @@ def change_data():
                                    get_password=False, heading_h1=heading_h1,
                                    form=form, message='Такой логин уже занят!', footer_register=False)
         if emails:
-            user = requests.get(f'http://loaclhost:8080/api/users/{current_user.id}').json()['user']
+            user = requests.get(f'http://loaclhost:5000/api/users/{current_user.id}').json()['user']
             form.login.data = user['login']
             form.email.data = user['email']
             form.surname.data = user['surname']
@@ -164,11 +164,11 @@ def change_data():
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
                                    form=form, message='Такая почта уже занята!', footer_register=False)
-        response = requests.put(f'http://127.0.0.1:8080/api/users/{current_user.id}',
+        response = requests.put(f'http://127.0.0.1:5000/api/users/{current_user.id}',
                                 json={'name': form.name.data, 'surname': form.surname.data, 'email': form.email.data,
                                       'login': form.login.data})
         return response.json()  # Фронтендер, переделай так, чтоб красиво показать пользователю, что все ОК
-    user = requests.get(f'http://localhost:8080/api/users/{current_user.id}').json()['user']
+    user = requests.get(f'http://localhost:5000/api/users/{current_user.id}').json()['user']
     form.login.data = user['login']
     form.email.data = user['email']
     form.surname.data = user['surname']
@@ -201,8 +201,8 @@ def main():
     api.add_resource(UsersListResource, '/api/users')
     api.add_resource(PostsResource, '/api/posts/<int:post_id>')
     api.add_resource(PostsListResource, '/api/posts')
-    app.run(host='127.0.0.1', port=8080, debug=True)
-    # serve(app, host='127.0.0.1', port=8080)  # Потом раскомментировать перед выпуском в мир
+    # app.run(host='127.0.0.1', port=8080, debug=True)
+    serve(app, host='127.0.0.1', port=5000)  # Потом раскомментировать перед выпуском в мир
 
 
 if __name__ == '__main__':
