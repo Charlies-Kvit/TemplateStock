@@ -11,8 +11,7 @@
 ---
 ## Документация по установке и запуску
 1. Для начала склонируйте проект: ```git clone https://github.com/Charlies-Kvit/Flask-project```
-2. Затем установите все нужные библиотеки: ```pip install -r requirement.txt``` 
-3. Запустите start.sh
+2. Запустите start.sh ```./start.sh```, если выскакивает permission denied, то попробуйте ```chmod +x start.sh``` и попробуйте запустить снова. Если же нет, то попробуйте sudo. 
 
 Всё!
 
