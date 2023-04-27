@@ -171,7 +171,7 @@ def change_data():
             form.email.data = user['email']
             form.surname.data = user['surname']
             form.name.data = user['name']
-            return render_template('register.html', title=title, get_nav=False,
+            return render_template('settings.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
                                    form=form, message='Такой логин уже занят!', footer_register=False)
         if emails:
@@ -180,19 +180,20 @@ def change_data():
             form.email.data = user['email']
             form.surname.data = user['surname']
             form.name.data = user['name']
-            return render_template('register.html', title=title, get_nav=False,
+            return render_template('settings.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
                                    form=form, message='Такая почта уже занята!', footer_register=False)
         response = requests.put(f'http://127.0.0.1:8080/api/users/{current_user.id}',
                                 json={'name': form.name.data, 'surname': form.surname.data, 'email': form.email.data,
                                       'login': form.login.data})
-        return response.json()  # Фронтендер, переделай так, чтоб красиво показать пользователю, что все ОК
+        return render_template('settings.html', title=title, flag=response.json()['success'], get_nav=False,
+                               get_password=False, form=form, footer_register=False)
     user = requests.get(f'http://localhost:8080/api/users/{current_user.id}').json()['user']
     form.login.data = user['login']
     form.email.data = user['email']
     form.surname.data = user['surname']
     form.name.data = user['name']
-    return render_template('register.html', title=title, get_nav=False, heading_h1=heading_h1,
+    return render_template('settings.html', title=title, get_nav=False, heading_h1=heading_h1,
                            get_password=False, form=form, footer_register=False)
 
 

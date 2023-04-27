@@ -1,18 +1,25 @@
 {% extends "base.html" %}
 
 {% block content %}
-
-<form action="" method="POST">
-    <p>title</p>
-    <input type="text" name="title" id="title">
-    <p>content</p>
-    <input type="text" name="content" id="content">
-    <p>img</p>
-    <input type="text" name="img" id="img">
-    <p>tags (;)</p>
-    <input type="text" name="tags" id="tags">
-    <p>is private</p>
-    <button type="submit">submit post</button>
-</form>
+<h1 class="heading">Добавить новый проект</h1>
+<form action="" method="POST" class="form row g-3">
+        <div class="col-12">
+            <p class="label">Название</p>
+            <input type="text" name="title" id="title" class="form-control" placeholder="Название">
+        </div>
+        <div class="col-12">
+            <p class="label">Описание</p>
+            <input type="text" name="content" id="content" class="form-control" placeholder="Описание">
+        </div>
+        <div class="col-12">
+          <p class="label">Изображение (ссылка)</p>
+          <input type="text" name="img" id="img" class="form-control" placeholder="Ссылка на изображение">
+        </div>
+        <div class="col-12">
+          <p class="label">Тэги (через ;)</p>
+          <input type="text" name="tags" id="tags" class="form-control" placeholder="Тэги">
+        </div>
+        <button type="submit" class="btn btn-outline-dark">Опубликовать</button>
+    </form>
 
 {% endblock %}
