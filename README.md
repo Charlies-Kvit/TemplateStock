@@ -11,8 +11,7 @@
 ---
 ## Документация по установке и запуску
 1. Для начала склонируйте проект: ```git clone https://github.com/Charlies-Kvit/Flask-project```
-2. Затем установите все нужные библиотеки: ```pip install -r requirement.txt```
-3. Запустите app.py либо в среде разработки, либо командой:  ```python3 app.py```
+2. Запустите скрипт start.sh: ```./start.sh```. Если выскакивает permission denied - попробуйте `chmod +x start.sh` а затем снова запустить
 
 Если хотите, можете это сделать в виртуальной среде, но с этим разбирайтесь [здесь](https://python.ivan-shamaev.ru/python-virtual-env-packages-virtualenv-venv-requirements-txt/#:~:text=Venv%20%2D%D1%8D%D1%82%D0%BE%20%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%2C%20%D0%BF%D0%BE%D1%81%D1%82%D0%B0%D0%B2%D0%BB%D1%8F%D0%B5%D0%BC%D1%8B%D0%B9%20%D1%81,%D0%BF%D0%B0%D0%BA%D0%B5%D1%82%D0%BE%D0%B2%2C%20%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BB%D0%B5%D0%BD%D0%BD%D1%8B%D1%85%20%D0%B2%20%D0%B4%D1%80%D1%83%D0%B3%D0%B8%D1%85%20%D1%81%D1%80%D0%B5%D0%B4%D0%B0%D1%85).
 
@@ -137,10 +136,56 @@ http://URL/api/users/<id>
 GET
 http://URL/api/posts
 ```
+Пример ответа на запрос ```http://URL/api/posts```:
+```json
+{
+  "posts": [
+    {
+      "created_date": "2023-04-25 20:29:13",
+      "tags": "", 
+      "img": "", 
+      "title": "Это первый нормальный пост!",
+      "user_id": 1,
+      "id": 1,
+      "content": "Э"
+    },
+    {
+      "created_date": "2023-04-25 20:31:25", 
+      "tags": "Free",
+      "img": "https://i.imgur.com/D4CIMOG.jpeg", 
+      "title": "Это действительно первый нормальный пост", 
+      "user_id": 1, "id": 2, "content": "это действиетльно нормальный пост"
+    },
+    {
+      "created_date": "2023-04-26 19:49:54", 
+      "tags": "dsadasdasdasdasd", 
+      "img": "sdasdasdasdasdasd", 
+      "title": "asasdasdasdasd", 
+      "user_id": 1, 
+      "id": 3, 
+      "content": "sdasdasdasdasdasd"
+    }
+  ]
+}
+```
 #### Для получения данных одного пользователя:
 ```text
 GET
 http://URL/api/post/<id>
+```
+Пример ответа на запрос ```http://URL/api/posts/1```
+```json
+{
+  "post": {
+    "created_date": "2023-04-25 20:29:13",
+    "tags": "", 
+    "img": "", 
+    "title": "Это первый нормальный пост!",
+    "user_id": 1,
+    "id": 1,
+    "content": "Э"
+  }
+}
 ```
 #### Для добавления нового поста:
 POST запрос должен содержать json!!!
@@ -150,10 +195,18 @@ http://URL/api/posts
 ```
 JSON:
 ```json
-{"title": "your_title", "content": "your_content", "is_private":  "True or False",
-"user_id": "id of the user who created the post"}
+{
+  "title": "your_title", 
+  "content": "your_content", 
+  "is_private":  "True or False",
+  "user_id": "id of the user who created the post"
+}
 ```
 Все поля обязательны!!!
+Ответ:
+```json
+{"success": "OK"}
+```
 #### Для изменения данных поста:
 PUT запрос должен содержать json!!!
 ```text
@@ -162,13 +215,25 @@ http://URL/api/posts/<id>
 ```
 JSON:
 ```json
-{"title": "your_title", "content": "your_content", "is_private":  "True or False"}
+{
+  "title": "your_title", 
+  "content": "your_content", 
+  "is_private":  "True or False"
+}
 ```
 Все поля обязательны!!!
+Ответ:
+```json
+{"success": "OK"}
+```
 #### Для удаления поста:
 ```text
 DELETE
 http://URL/api/posts/<id>
+```
+Ответ:
+```json
+{"success": "OK"}
 ```
 ---
 Это все, что касается работы с api на данный момент.
