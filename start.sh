@@ -9,6 +9,8 @@ export PYTHONUNBUFFERED=true
 # Install Python 3 virtual env
 VIRTUALENV=./venv
 
+mkdir "db"
+
 if [ ! -d $VIRTUALENV ]; then
   python3 -m venv $VIRTUALENV
 fi
