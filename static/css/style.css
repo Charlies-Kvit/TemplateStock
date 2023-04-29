@@ -71,7 +71,7 @@ main {
     width: 60%;
 }
 
-.login-form {
+.form {
     display: flex;
     flex-direction: column;
     border-bottom-left-radius: 10px;
@@ -114,12 +114,13 @@ main {
 }
 
 .avatar {
-    background-color: grey;
+    padding: 0;
     border-radius: 50%;
+    border: 3px dashed #6c757d;
 }
 
 .nav-avatar:hover {
-    border: 5px solid #c2c2c2;
+    border: 5px solid #6c757d;
 }
 
 .setting-avatar {
@@ -141,4 +142,14 @@ main {
 .setting-avatar button{
     margin: 5px 0;
     width: 100%;
+}
+
+.main-content {
+    background-color: #e3e6e8;
+    width: 60%;
+    height: 800px;
+    text-align: center;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 80px;
 }

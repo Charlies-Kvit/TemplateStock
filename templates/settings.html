@@ -6,7 +6,7 @@
     <div class="setting-avatar row g-3">
         <p class="label" style="font-size: 20px; text-align: center;">Выбрать аватар</p>
         <div class="avatar" style="width: 250px; height: 250px;">
-
+            <img src="../static/img/base_img.png" style="border-radius: 50%; width: 100%; height: 100%;">
         </div>
         <button type="button" class="btn btn-outline-secondary">Удалить</button>
         <button type="button" class="btn btn-outline-secondary">Загрузить изображение</button>
@@ -49,27 +49,11 @@
                 </div>
               {% endfor %}
         </div>
-        {% if get_password %}
-        <div class="col-md-6">
-              <p class="label">Пароль</p>
-              {{ form.password(class="form-control", type="password", placeholder="Пароль") }}
-              {% for error in form.password.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-              {% endfor %}
-        </div>
-        <div class="col-md-6">
-              <p class="label">Повторите пароль</p>
-              {{ form.password_again(class="form-control", type="password", placeholder="Повторите пароль") }}
-              {% for error in form.password_again.errors %}
-                <div class="alert alert-danger" role="alert">
-                    {{ error }}
-                </div>
-              {% endfor %}
-        </div>
-        {% endif %}
         {{ form.submit(type="submit", class="btn btn-outline-dark submit-btn") }}
+
+        {% if flag == "OK" %}
+        <div>Изменения сохранены</div>
+        {% endif %}
     </form>
 </div>
 {% endblock %}

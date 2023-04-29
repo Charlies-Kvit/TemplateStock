@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for a in args %}
+    {{ if a.user_id == s }}
+    <div>
+        <h1><a href="/p/{{ a.post_id }}">{{ a.title }}</a></h1>
+        <p>{{ name[loop.index] }}, {{ a.created_date }}</p>
+        <img src="{{ a.img }}" alt="asd">
+        <p>{{ a.tags }}</p>
+        <p>{{ a.content }}</p>
+    </div>
+    {{ endif }}
+{% endfor %}
+
+{% endblock %}
