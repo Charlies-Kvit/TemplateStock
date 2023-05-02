@@ -76,7 +76,7 @@ def register():
         requests.post('http://127.0.0.1:8080/api/users', json={'login': form.login.data,
                                                                'email': form.email.data,
                                                                'surname': form.surname.data,
-                                                               'name': form.surname.data,
+                                                               'name': form.name.data,
                                                                'password': form.password.data})
         return redirect('/login')
     return render_template('register.html', title=title, get_nav=False, heading_h1=heading_h1,
