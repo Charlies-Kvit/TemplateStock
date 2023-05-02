@@ -221,8 +221,8 @@ def main():
     api.add_resource(UsersListResource, '/api/users')
     api.add_resource(PostsResource, '/api/posts/<int:post_id>')
     api.add_resource(PostsListResource, '/api/posts')
-    app.run(host='127.0.0.1', port=8080, debug=True)
-    # serve(app, host='127.0.0.1', port=8080)  # Потом раскомментировать перед выпуском в мир
+    # app.run(host='127.0.0.1', port=8080, debug=True)
+    serve(app, host='127.0.0.1', port=8080)  # Потом раскомментировать перед выпуском в мир
 
 
 if __name__ == '__main__':
