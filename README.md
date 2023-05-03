@@ -19,11 +19,12 @@
 
 ---
 ## Документация по API
+your_key - ключ, его можно получить только лично у разрабов
 ### Что касается пользователей:
 #### Для получения данных всех пользователей:
 ```text
 GET
-http://URL/api/users
+http://URL/api/users/your_key
 ```
 Пример ответа:
 ```json
@@ -62,7 +63,7 @@ http://URL/api/users
 #### Для получения данных одного пользователя:
 ```text
 GET
-http://URL/api/users/<id>
+http://URL/api/users/<id>/your_key
 ```
 Пример ответа на запрос ```http://URL/api/users/1``` :
 
@@ -76,6 +77,7 @@ http://URL/api/users/<id>
       "login": "popgdser",
       "name": "Артем",
       "surname": "Лебедев"
+      "img": "../static/img/default.png"
     }
 }
 ```
@@ -83,7 +85,7 @@ http://URL/api/users/<id>
 POST запрос должен содержать json!!!
 ```text
 POST
-http://URL/api/users
+http://URL/api/users/your_key
 ```
 JSON:
 ```json
@@ -93,6 +95,7 @@ JSON:
   "surname": "your_surname", 
   "name": "your_name", 
   "password": "your_password"
+  "img": "Путь к фалу на сервере"
 }
 ```
 Все поля обязательны!!! \
@@ -104,7 +107,7 @@ JSON:
 PUT запрос должен содержать json!!!
 ```text
 PUT
-http://URL/api/users
+http://URL/api/users/your_key
 ```
 JSON:
 ```json
@@ -123,7 +126,7 @@ JSON:
 #### Для удаления пользователя:
 ```text
 DELETE
-http://URL/api/users/<id>
+http://URL/api/users/<id>/your_key
 ```
 Ответ:
 ```json
@@ -134,7 +137,7 @@ http://URL/api/users/<id>
 #### Для получения данных всех постов:
 ```text
 GET
-http://URL/api/posts
+http://URL/api/posts/your_key
 ```
 Пример ответа на запрос ```http://URL/api/posts```:
 ```json
@@ -171,7 +174,7 @@ http://URL/api/posts
 #### Для получения данных одного пользователя:
 ```text
 GET
-http://URL/api/post/<id>
+http://URL/api/post/<id>/your_key
 ```
 Пример ответа на запрос ```http://URL/api/posts/1```
 ```json
@@ -191,7 +194,7 @@ http://URL/api/post/<id>
 POST запрос должен содержать json!!!
 ```text
 POST
-http://URL/api/posts
+http://URL/api/posts/your_key
 ```
 JSON:
 ```json
@@ -211,7 +214,7 @@ JSON:
 PUT запрос должен содержать json!!!
 ```text
 PUT
-http://URL/api/posts/<id>
+http://URL/api/posts/<id>/your_key
 ```
 JSON:
 ```json
@@ -229,7 +232,7 @@ JSON:
 #### Для удаления поста:
 ```text
 DELETE
-http://URL/api/posts/<id>
+http://URL/api/posts/<id>/your_key
 ```
 Ответ:
 ```json
