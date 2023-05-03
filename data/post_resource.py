@@ -10,6 +10,8 @@ parser.add_argument('img', required=True)
 parser.add_argument('tags', required=True)
 parser.add_argument('user_id', type=int)
 
+KEY = 'test_key'
+
 
 def abort_if_post_not_found(post_id):
     db_sess = db_session.create_session()
@@ -19,15 +21,23 @@ def abort_if_post_not_found(post_id):
         abort(404, f'Post {post_id} not found')
 
 
+def check_key(input_key):
+    return KEY == input_key
+
+
 class PostsResource(Resource):
-    def get(self, post_id):
+    def get(self, post_id, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         abort_if_post_not_found(post_id)
         db_sess = db_session.create_session()
         posts = db_sess.query(Post).get(post_id)
         db_sess.close()
         return {'post': posts.to_dict(only=('id', 'title', 'content', 'img', 'tags', 'created_date', 'user_id'))}
 
-    def put(self, post_id):
+    def put(self, post_id, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         abort_if_post_not_found(post_id)
         args = parser.parse_args()
         db_sess = db_session.create_session()
@@ -40,7 +50,9 @@ class PostsResource(Resource):
         db_sess.close()
         return {'success': 'OK'}
 
-    def delete(self, post_id):
+    def delete(self, post_id, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         abort_if_post_not_found(post_id)
         db_sess = db_session.create_session()
         post = db_sess.query(Post).get(post_id)
@@ -51,14 +63,18 @@ class PostsResource(Resource):
 
 
 class PostsListResource(Resource):
-    def get(self):
+    def get(self, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         db_sess = db_session.create_session()
         posts = db_sess.query(Post).all()
         db_sess.close()
         return {'posts': [post.to_dict(only=('id', 'title', 'content', 'created_date', 'img', 'tags', 'user_id'))
                           for post in posts]}
 
-    def post(self):
+    def post(self, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         args = parser.parse_args()
         db_sess = db_session.create_session()
         post = Post(

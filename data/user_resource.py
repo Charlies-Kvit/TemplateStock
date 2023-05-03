@@ -3,6 +3,7 @@ from flask_restful import abort, Resource, reqparse
 from .users import User
 from flask import abort, jsonify
 import datetime
+import os
 
 
 parser = reqparse.RequestParser()
@@ -10,7 +11,10 @@ parser.add_argument('login', required=True)
 parser.add_argument('email', required=True)
 parser.add_argument('surname', required=True)
 parser.add_argument('name', required=True)
+parser.add_argument('img', default="../static/img/base_img.png")
 parser.add_argument('password')
+
+KEY = 'test_key'
 
 
 def abort_if_user_not_found(user_id):
@@ -21,17 +25,25 @@ def abort_if_user_not_found(user_id):
         abort(404, f"User {user_id} not found")
 
 
+def check_key(input_key):
+    return KEY == input_key
+
+
 class UsersResource(Resource):
-    def get(self, user_id):
+    def get(self, user_id, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         abort_if_user_not_found(user_id)
         db_sess = db_session.create_session()
         user = db_sess.query(User).get(user_id)
         db_sess.close()
         return jsonify(
             {'user': user.to_dict(only=('id', 'login', 'surname', 'name', 'email', 'date_change',
-                                        'date_create'))})
+                                        'date_create', 'img'))})
 
-    def put(self, user_id):
+    def put(self, user_id, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         abort_if_user_not_found(user_id)
         args = parser.parse_args()
         db_sess = db_session.create_session()
@@ -45,10 +57,14 @@ class UsersResource(Resource):
         db_sess.close()
         return {'success': 'OK'}
 
-    def delete(self, user_id):
+    def delete(self, user_id, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         abort_if_user_not_found(user_id)
         db_sess = db_session.create_session()
         user = db_sess.query(User).get(user_id)
+        if user.img != "../static/img/base_img.png":
+            os.remove(f"data/{user.img}")
         db_sess.delete(user)
         db_sess.commit()
         db_sess.close()
@@ -56,7 +72,9 @@ class UsersResource(Resource):
 
 
 class UsersListResource(Resource):
-    def get(self):
+    def get(self, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         db_sess = db_session.create_session()
         users = db_sess.query(User).all()
         db_sess.close()
@@ -68,14 +86,17 @@ class UsersListResource(Resource):
                      ]
         })
 
-    def post(self):
+    def post(self, token):
+        if not check_key(token):
+            return {'error': 'Unauthorized'}
         args = parser.parse_args()
         db_sess = db_session.create_session()
         user = User(
             login=args['login'],
             email=args['email'],
             surname=args['surname'],
-            name=args['name']
+            name=args['name'],
+            img=args['img']
         )
         user.set_password(args['password'])
         db_sess.add(user)

@@ -3,7 +3,7 @@
 {% block content %}
 <h1 class="heading">{{ heading_h1 }}</h1>
 <div class="main_tables">
-    <form class="register-form row g-3" action="" method="POST">
+    <form class="register-form row g-3" action="" method="POST" enctype="multipart/form-data">
         {{ form.hidden_tag() }}
         <div class="col-md-6">
               <p class="label">Логин</p>
@@ -40,6 +40,15 @@
                     {{ error }}
                 </div>
               {% endfor %}
+        </div>
+        <div class="col-12">
+            <p class="label">Аватарка</p>
+            {{ form.img(class="form-control") }}
+            {% for error in form.img.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ error }}
+            </div>
+            {% endfor %}
         </div>
         {% if get_password %}
         <div class="col-md-6">

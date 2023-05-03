@@ -1,4 +1,3 @@
-import flask
 from flask import Flask, render_template, redirect, request
 from waitress import serve
 from forms.user import RegisterForm, LoginForm
@@ -6,43 +5,51 @@ from flask_restful import Api
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
 from data.users import User
-from data.posts import Post
 from data.user_resource import UsersResource, UsersListResource
 from data.post_resource import PostsResource, PostsListResource
+from key_generator import secret_key_generator
 import requests
+import flask
 
 # Инициализация веб приложения
 app = Flask(__name__)
 api = Api(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-app.config['SECRET_KEY'] = 'test_key'  # Потом изменить!!!
+app.config['SECRET_KEY'] = secret_key_generator(20)
 
 
 @app.route('/')
 def index():
     # Главная страница
-
-    posts = requests.get(f'http://localhost:8080/api/posts').json()
+    posts = requests.get(f'http://localhost:8080/api/posts/test_key').json()
     name = []
     for i in reversed(posts['posts']):
-        name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}').json()['user']["login"])
-
-    print(posts)
+        name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}/test_key').json()['user']["login"])
+    try:
+        if current_user.id:
+            response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()
+            avatar = f"../{response['user']['img']}"
+    except Exception:
+        avatar = "../static/img/base_img.png"
     return render_template('index.html', title='Главная страница', get_nav=True, current_user=current_user,
-                           args=reversed(posts['posts']), name=name)
+                           args=reversed(posts['posts']), name=name, avatar=avatar)
 
 
 @app.route('/u/<s>')
 def uuposts(s):
-    posts = requests.get(f'http://localhost:8080/api/posts').json()
+    posts = requests.get(f'http://localhost:8080/api/posts/test_key').json()
     name = []
     for i in reversed(posts['posts']):
-        name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}').json()['user']["login"])
-
-    print(posts)
+        name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}/test_key').json()['user']["login"])
+    try:
+        if current_user.id:
+            response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()
+            avatar = f"../{response['user']['img']}"
+    except Exception:
+        avatar = "../static/img/base_img.png"
     return render_template('index.html', user_id=posts['posts']['user_id'], title='Главная страница', get_nav=True, s=s,
-                           args=reversed(posts['posts']), name=name)
+                           args=reversed(posts['posts']), name=name, avatar=avatar)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -56,7 +63,7 @@ def register():
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
                                    form=form, message='Пароли не совпадают', footer_register=True)
-        response = requests.get('http://localhost:8080/api/users').json()
+        response = requests.get('http://localhost:8080/api/users/test_key').json()
         logins, emails = False, False
         for user in response['users']:
             if form.login.data == user['login']:
@@ -73,17 +80,21 @@ def register():
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
                                    form=form, message='Такая почта уже занята!', footer_register=True)
-        requests.post('http://127.0.0.1:8080/api/users', json={'login': form.login.data,
-                                                               'email': form.email.data,
-                                                               'surname': form.surname.data,
-                                                               'name': form.name.data,
-                                                               'password': form.password.data})
+        if form.img.data:
+            img = f"../avatars/{form.login.data}.png"
+            with open(f'avatars/{form.login.data}.png', 'wb') as avatar:
+                avatar.write(form.img.data.read())
+        else:
+            img = "../static/img/base_img.png"
+        requests.post('http://127.0.0.1:8080/api/users/test_key', json={'login': form.login.data,
+                                                                        'email': form.email.data,
+                                                                        'surname': form.surname.data,
+                                                                        'name': form.name.data,
+                                                                        'password': form.password.data,
+                                                                        'img': img})
         return redirect('/login')
     return render_template('register.html', title=title, get_nav=False, heading_h1=heading_h1,
                            get_password=True, form=form, footer_register=True)
-
-
-
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -101,7 +112,7 @@ def login():
         if user and user.check_password(form.password.data):
             login_user(user, remember=form.remember_me.data)
             db_sess.close()
-            return redirect('/menu')
+            return redirect('/')
         db_sess.close()
         return render_template('login.html',
                                get_nav=False,
@@ -112,49 +123,67 @@ def login():
     return render_template('login.html', title=title, heading_h1=heading_h1, get_nav=False, form=form)
 
 
-@app.route('/menu')
+@app.route('/avatars/<filename>')
 @login_required
-def menu():
-    title = 'Меню'
-    heading_h1 = "Меню"
-    return render_template('menu.html', title=title, user=current_user, get_nav=True, heading_h1=heading_h1)
+def return_avatar(filename):
+    with open(f"avatars/{filename}", 'rb') as avatar:
+        img = avatar.read()
+        return img
 
 
 @app.route('/addpost', methods=['GET', 'POST'])
 @login_required
 def addpost():
-    if flask.request.method =='GET':
-        return render_template('addpost.html')
+    if flask.request.method == 'GET':
+        try:
+            if current_user.id:
+                response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()
+                avatar = f"../{response['user']['img']}"
+        except Exception:
+            avatar = "../static/img/base_img.png"
+        return render_template('addpost.html', avatar=avatar)
     elif flask.request.method == "POST":
         print(flask.request.values.get('img'), flask.request.values.get('tags'))
-        requests.post('http://127.0.0.1:8080/api/posts', json={'title': flask.request.values.get('title'),
-                                                               'content': flask.request.values.get('content'),
-                                                               'img': flask.request.values.get('img'),
-                                                               'tags': flask.request.values.get('tags'),
-                                                               'user': current_user.name,
-                                                               'user_id': current_user.id})
+        requests.post('http://127.0.0.1:8080/api/posts/test_key', json={'title': flask.request.values.get('title'),
+                                                                        'content': flask.request.values.get('content'),
+                                                                        'img': flask.request.values.get('img'),
+                                                                        'tags': flask.request.values.get('tags'),
+                                                                        'user': current_user.name,
+                                                                        'user_id': current_user.id})
         return redirect(f'/')
 
 
 @app.route('/p/<s>')
 def ppost(s):
-    posts = requests.get(f'http://localhost:8080/api/posts/{s}').json()
+    posts = requests.get(f'http://localhost:8080/api/posts/{s}/test_key').json()
     print(posts["post"]["user_id"])
-    name = requests.get(f'http://localhost:8080/api/users/{posts["post"]["user_id"]}').json()
+    name = requests.get(f'http://localhost:8080/api/users/{posts["post"]["user_id"]}/test_key').json()
     print(posts, name)
     print(name["user"]["login"])
-    return render_template('postt.html', a=posts['post'], username=name["user"]["login"])
-
+    try:
+        if current_user.id:
+            response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()
+            avatar = f"../{response['user']['img']}"
+    except Exception:
+        avatar = "../static/img/base_img.png"
+    return render_template('postt.html', a=posts['post'], username=name["user"]["login"], avatar=avatar)
 
 
 @app.route('/change_data', methods=['GET', 'POST'])
+@login_required
 def change_data():
     title = 'Изменить данные аккаунта'
     heading_h1 = "Изменить данные аккаунта"
     form = RegisterForm()
     form.submit.label.text = 'Изменить'
+    try:
+        if current_user.id:
+            response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()
+            avatar = f"../{response['user']['img']}"
+    except Exception:
+        avatar = "../static/img/base_img.png"
     if form.validate_on_submit() or request.method == 'POST':
-        response = requests.get('http://localhost:8080/api/users').json()
+        response = requests.get('http://localhost:8080/api/users/test_key').json()
         logins, emails = False, False
         for user in response['users']:
             if user['id'] == current_user.id:
@@ -166,35 +195,44 @@ def change_data():
                 logins = True
                 break
         if logins:
-            user = requests.get(f'http://loaclhost:8080/api/users/{current_user.id}').json()['user']
+            user = requests.get(f'http://loaclhost:8080/api/users/{current_user.id}/test_key').json()['user']
             form.login.data = user['login']
             form.email.data = user['email']
             form.surname.data = user['surname']
             form.name.data = user['name']
             return render_template('settings.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
-                                   form=form, message='Такой логин уже занят!', footer_register=False)
+                                   form=form, message='Такой логин уже занят!', footer_register=False, avatar=avatar)
         if emails:
-            user = requests.get(f'http://loaclhost:8080/api/users/{current_user.id}').json()['user']
+            user = requests.get(f'http://loaclhost:8080/api/users/{current_user.id}/test_key').json()['user']
             form.login.data = user['login']
             form.email.data = user['email']
             form.surname.data = user['surname']
             form.name.data = user['name']
             return render_template('settings.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
-                                   form=form, message='Такая почта уже занята!', footer_register=False)
-        response = requests.put(f'http://127.0.0.1:8080/api/users/{current_user.id}',
+                                   form=form, message='Такая почта уже занята!', footer_register=False, avatar=avatar)
+        response = requests.put(f'http://127.0.0.1:8080/api/users/{current_user.id}/test_key',
                                 json={'name': form.name.data, 'surname': form.surname.data, 'email': form.email.data,
                                       'login': form.login.data})
         return render_template('settings.html', title=title, flag=response.json()['success'], get_nav=False,
-                               get_password=False, form=form, footer_register=False)
-    user = requests.get(f'http://localhost:8080/api/users/{current_user.id}').json()['user']
+                               get_password=False, form=form, footer_register=False, avatar=avatar)
+    user = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()['user']
     form.login.data = user['login']
     form.email.data = user['email']
     form.surname.data = user['surname']
     form.name.data = user['name']
     return render_template('settings.html', title=title, get_nav=False, heading_h1=heading_h1,
-                           get_password=False, form=form, footer_register=False)
+                           get_password=False, form=form, footer_register=False, avatar=avatar)
+
+
+@app.route("/delete_account")
+@login_required
+def delete_account():
+    user_id = current_user.id
+    logout_user()
+    requests.delete(f'http://localhost:8080/api/users/{user_id}/test_key')
+    return redirect('/')
 
 
 @app.route('/logout')
@@ -217,10 +255,10 @@ def load_user(user_id):
 def main():
     # запуск приложения
     db_session.global_init('db/db.sqlite')
-    api.add_resource(UsersResource, '/api/users/<int:user_id>')
-    api.add_resource(UsersListResource, '/api/users')
-    api.add_resource(PostsResource, '/api/posts/<int:post_id>')
-    api.add_resource(PostsListResource, '/api/posts')
+    api.add_resource(UsersResource, '/api/users/<int:user_id>/<token>')
+    api.add_resource(UsersListResource, '/api/users/<token>')
+    api.add_resource(PostsResource, '/api/posts/<int:post_id>/<token>')
+    api.add_resource(PostsListResource, '/api/posts/<token>')
     # app.run(host='127.0.0.1', port=8080, debug=True)
     serve(app, host='127.0.0.1', port=8080)  # Потом раскомментировать перед выпуском в мир
 
