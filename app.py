@@ -235,6 +235,13 @@ def delete_account():
     return redirect('/')
 
 
+@app.route("/delete_post/<int:post_id>")
+@login_required
+def delete_post(post_id):
+    requests.delete(f'http://localhost:8080/api/posts/{post_id}/test_key')
+    return redirect('/')
+
+
 @app.route('/logout')
 @login_required
 def logout():

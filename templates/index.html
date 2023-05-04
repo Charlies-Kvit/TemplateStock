@@ -15,6 +15,11 @@
             {% for tag in a.tags.split('; ') %}
             <a href="#" class="btn btn-primary" style="width: 20%; margin-right: 10px;">{{ tag }}</a>
             {% endfor %}
+            {% if a.user_id == current_user.id %}
+            <a href="/delete_post/{{ a.id }}" class="btn btn-danger" style="width: 20%; margin-right: 10px;">
+                Удалить пост
+            </a>
+            {% endif %}
         </div>
 
       </div>
