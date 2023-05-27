@@ -43,7 +43,7 @@ http://URL/api/users/your_key
     {
       "date_change": "2023-04-21 21:11:29",
       "date_create": "2023-04-21 20:42:19",
-      "email": "theivangao@gmail.com",
+      "email": "ame@gmail.com",
       "id": 2,
       "login": "Popgdse",
       "name": "Рома",
