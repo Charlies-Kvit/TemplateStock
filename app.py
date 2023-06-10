@@ -1,6 +1,7 @@
 from flask import Flask, render_template, redirect, request
 from waitress import serve
 from forms.user import RegisterForm, LoginForm
+from forms.search import AppSearch
 from flask_restful import Api
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from data import db_session
@@ -16,15 +17,24 @@ app = Flask(__name__)
 api = Api(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
-app.config['SECRET_KEY'] = secret_key_generator(20)
+app.config['SECRET_KEY'] = secret_key_generator(100)
 
 
 @app.route('/')
 def index():
     # Главная страница
-    posts = requests.get(f'http://localhost:8080/api/posts/test_key').json()
+    posts = requests.get(f'http://localhost:8080/api/posts/test_key').json()['posts']
     name = []
-    for i in reversed(posts['posts']):
+    form = AppSearch()
+    if request.values.get('submit') == 'Искать':
+        search = request.values.get('search')
+        print(search)
+        answer = []
+        for post in posts:
+            if search in post['tags'].split("; ") or search in post['content']:
+                answer.append(post)
+        posts = answer
+    for i in reversed(posts):
         name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}/test_key').json()['user']["login"])
     try:
         if current_user.id:
@@ -33,13 +43,16 @@ def index():
     except Exception:
         avatar = "../static/img/base_img.png"
     return render_template('index.html', title='Главная страница', get_nav=True, current_user=current_user,
-                           args=reversed(posts['posts']), name=name, avatar=avatar)
+                           args=reversed(posts), name=name, avatar=avatar, search_form=form)
 
 
-@app.route('/u/<s>')
-def uuposts(s):
+@app.route('/user_posts/<s>')
+def user_posts(s):
+    if request.values.get('submit') == 'Искать':
+        return redirect(f'/?search={request.values.get("search")}&submit=Искать')
     posts = requests.get(f'http://localhost:8080/api/posts/test_key').json()
     name = []
+    form = AppSearch()
     for i in reversed(posts['posts']):
         name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}/test_key').json()['user']["login"])
     try:
@@ -48,8 +61,9 @@ def uuposts(s):
             avatar = f"../{response['user']['img']}"
     except Exception:
         avatar = "../static/img/base_img.png"
-    return render_template('index.html', user_id=posts['posts']['user_id'], title='Главная страница', get_nav=True, s=s,
-                           args=reversed(posts['posts']), name=name, avatar=avatar)
+    print(posts)
+    return render_template('index.html', user_id=posts['posts'][0]['user_id'], title='Главная страница', get_nav=True, s=s,
+                           args=reversed(posts['posts']), name=name, avatar=avatar, search_form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -101,6 +115,7 @@ def register():
 def login():
     # форма входа
     form = LoginForm()
+    search_form = AppSearch()
     heading_h1 = "Вход"
     title = 'Вход'
     if form.validate_on_submit():
@@ -120,7 +135,8 @@ def login():
                                heading_h1=heading_h1,
                                message="Неправильный логин или пароль",
                                form=form)
-    return render_template('login.html', title=title, heading_h1=heading_h1, get_nav=False, form=form)
+    return render_template('login.html', title=title, heading_h1=heading_h1, get_nav=False, form=form,
+                           search_form=search_form)
 
 
 @app.route('/avatars/<filename>')
@@ -133,7 +149,8 @@ def return_avatar(filename):
 
 @app.route('/addpost', methods=['GET', 'POST'])
 @login_required
-def addpost():
+def add_post():
+    form = AppSearch()
     if flask.request.method == 'GET':
         try:
             if current_user.id:
@@ -141,7 +158,7 @@ def addpost():
                 avatar = f"../{response['user']['img']}"
         except Exception:
             avatar = "../static/img/base_img.png"
-        return render_template('addpost.html', avatar=avatar)
+        return render_template('addpost.html', avatar=avatar, search_form=form)
     elif flask.request.method == "POST":
         print(flask.request.values.get('img'), flask.request.values.get('tags'))
         requests.post('http://127.0.0.1:8080/api/posts/test_key', json={'title': flask.request.values.get('title'),
@@ -266,8 +283,8 @@ def main():
     api.add_resource(UsersListResource, '/api/users/<token>')
     api.add_resource(PostsResource, '/api/posts/<int:post_id>/<token>')
     api.add_resource(PostsListResource, '/api/posts/<token>')
-    # app.run(host='127.0.0.1', port=8080, debug=True)
-    serve(app, host='127.0.0.1', port=8080)  # Потом раскомментировать перед выпуском в мир
+    app.run(host='127.0.0.1', port=8080, debug=True)
+    # serve(app, host='127.0.0.1', port=8080)  # Потом раскомментировать перед выпуском в мир
 
 
 if __name__ == '__main__':
