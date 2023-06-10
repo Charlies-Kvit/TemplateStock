@@ -1,5 +1,6 @@
 from data import db_session
 from flask_restful import abort, Resource, reqparse
+from .check_key import check_key
 from .users import User
 from flask import abort, jsonify
 import datetime
@@ -14,8 +15,6 @@ parser.add_argument('name', required=True)
 parser.add_argument('img', default="../static/img/base_img.png")
 parser.add_argument('password')
 
-KEY = 'test_key'
-
 
 def abort_if_user_not_found(user_id):
     session = db_session.create_session()
@@ -23,10 +22,6 @@ def abort_if_user_not_found(user_id):
     session.close()
     if not users:
         abort(404, f"User {user_id} not found")
-
-
-def check_key(input_key):
-    return KEY == input_key
 
 
 class UsersResource(Resource):
