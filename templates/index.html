@@ -8,7 +8,7 @@
         {{ name[loop.index] }}, {{ a.created_date }}
       </div>
       <div class="card-body" style="display: flex; flex-direction: column;">
-        <h5 class="card-title"><a href="/p/{{ loop.index }}" style="color: #212529; text-decoration: None;">{{ a.title }}</a></h5>
+        <h5 class="card-title"><a href="/p/{{ a.id }}" style="color: #212529; text-decoration: None;">{{ a.title }}</a></h5>
         <p class="card-text">{{ a.content }}</p>\
         <img src="{{ a.img }}" style="width: 50%; margin-bottom: 15px;">
         <div style="display: flex; flex-direction: row;">
