@@ -24,18 +24,21 @@ app.config['SECRET_KEY'] = secret_key_generator(100)
 def index():
     # Главная страница
     posts = requests.get(f'http://localhost:8080/api/posts/test_key').json()['posts']
-    name = []
+    names = {}
     form = AppSearch()
     if request.values.get('submit') == 'Искать':
         search = request.values.get('search')
-        print(search)
         answer = []
         for post in posts:
             if search in post['tags'].split("; ") or search in post['content']:
                 answer.append(post)
         posts = answer
-    for i in reversed(posts):
-        name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}/test_key').json()['user']["login"])
+    for post in reversed(posts):
+        if post['user_id'] in names:
+            names[post['user_id']] = names[post['user_id']]
+            continue
+        user = requests.get(f'http://localhost:8080/api/users/{post["user_id"]}/test_key').json()['user']
+        names[user['id']] = user['login']
     try:
         if current_user.id:
             response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()
@@ -43,7 +46,7 @@ def index():
     except Exception:
         avatar = "../static/img/base_img.png"
     return render_template('index.html', title='Главная страница', get_nav=True, current_user=current_user,
-                           args=reversed(posts), name=name, avatar=avatar, search_form=form)
+                           args=reversed(posts), names=names, avatar=avatar, search_form=form)
 
 
 @app.route('/user_posts/<s>')
@@ -51,19 +54,23 @@ def user_posts(s):
     if request.values.get('submit') == 'Искать':
         return redirect(f'/?search={request.values.get("search")}&submit=Искать')
     posts = requests.get(f'http://localhost:8080/api/posts/test_key').json()
-    name = []
+    names = {}
     form = AppSearch()
-    for i in reversed(posts['posts']):
-        name.append(requests.get(f'http://localhost:8080/api/users/{i["user_id"]}/test_key').json()['user']["login"])
+    for post in reversed(posts['posts']):
+        if post['user_id'] in names:
+            names[post['user_id']] = names[post['user_id']]
+            continue
+        user = requests.get(f'http://localhost:8080/api/users/{post["user_id"]}/test_key').json()['user']
+        names[user['id']] = user['login']
     try:
         if current_user.id:
             response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()
             avatar = f"../{response['user']['img']}"
     except Exception:
         avatar = "../static/img/base_img.png"
-    print(posts)
-    return render_template('index.html', user_id=posts['posts'][0]['user_id'], title='Главная страница', get_nav=True, s=s,
-                           args=reversed(posts['posts']), name=name, avatar=avatar, search_form=form)
+    return render_template('index.html', user_id=posts['posts'][0]['user_id'], title='Главная страница', get_nav=True,
+                           s=s,
+                           args=reversed(posts['posts']), names=names, avatar=avatar, search_form=form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -173,10 +180,7 @@ def add_post():
 @app.route('/p/<s>')
 def ppost(s):
     posts = requests.get(f'http://localhost:8080/api/posts/{s}/test_key').json()
-    print(posts["post"]["user_id"])
     name = requests.get(f'http://localhost:8080/api/users/{posts["post"]["user_id"]}/test_key').json()
-    print(posts, name)
-    print(name["user"]["login"])
     try:
         if current_user.id:
             response = requests.get(f'http://localhost:8080/api/users/{current_user.id}/test_key').json()

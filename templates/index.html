@@ -5,7 +5,7 @@
 {% for a in args %}
     <div class="card" style="width: 60%;">
       <div class="card-header">
-        {{ name[loop.index] }}, {{ a.created_date }}
+        {{ names[a.user_id] }}, {{ a.created_date }}
       </div>
       <div class="card-body" style="display: flex; flex-direction: column;">
         <h5 class="card-title"><a href="/p/{{ a.id }}" style="color: #212529; text-decoration: None;">{{ a.title }}</a></h5>
