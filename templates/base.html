@@ -25,9 +25,11 @@
                         <a class="nav-link" href="https://github.com/Charlies-Kvit/Flask-project">О сайте</a>
                     </li>
                   </ul>
-                  <form class="d-flex" role="search">
-                     <input class="form-control me-1" type="search" placeholder="Поиск по сайту" aria-label="Search">
-                     <button class="btn btn-outline-light me-2" type="submit">Искать</button>
+                  <form class="d-flex" role="search" method="get">
+                     <!--<input class="form-control me-1" type="search" placeholder="Поиск по сайту" aria-label="Search">
+                     <button class="btn btn-outline-light me-2" type="submit">Искать</button>-->
+                      {{ search_form.search(class="form-control me-1") }}
+                      {{ search_form.submit(type="submit", class="btn btn-outline-light me-2") }}
                   </form>
                   {% if current_user.is_authenticated%}
                     <div class="menu-btn">

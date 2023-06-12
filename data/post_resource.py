@@ -1,5 +1,6 @@
 from data import db_session
 from flask_restful import abort, Resource, reqparse
+from .check_key import check_key
 from .posts import Post
 from flask import abort
 
@@ -10,8 +11,6 @@ parser.add_argument('img', required=True)
 parser.add_argument('tags', required=True)
 parser.add_argument('user_id', type=int)
 
-KEY = 'test_key'
-
 
 def abort_if_post_not_found(post_id):
     db_sess = db_session.create_session()
@@ -19,10 +18,6 @@ def abort_if_post_not_found(post_id):
     db_sess.close()
     if not posts:
         abort(404, f'Post {post_id} not found')
-
-
-def check_key(input_key):
-    return KEY == input_key
 
 
 class PostsResource(Resource):

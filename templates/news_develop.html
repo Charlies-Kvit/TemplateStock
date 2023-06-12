@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% for a in news %}
+    <div class="card" style="width: 60%;">
+      <div class="card-header">
+        Developers
+      </div>
+      <div class="card-body" style="display: flex; flex-direction: column;">
+        <h5 class="card-title">{{ a.title }}</h5>
+        <div class="card-text">{{ a.content|safe }}</div>
+      </div>
+    </div>
+{% endfor %}
+
+{% endblock %}
