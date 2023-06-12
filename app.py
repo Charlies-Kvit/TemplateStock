@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request
 from waitress import serve
+from forms.post import AddPost
 from forms.user import RegisterForm, LoginForm
 from forms.search import AppSearch
 from flask_restful import Api
@@ -79,6 +80,7 @@ def register():
     # форма регистрации
     if request.values.get('submit') == 'Искать':
         return redirect(f'/?search={request.values.get("search")}&submit=Искать')
+    search_form = AppSearch()
     form = RegisterForm()
     heading_h1 = 'Регистрация'
     title = 'Регистрация'
@@ -86,7 +88,8 @@ def register():
         if form.password.data != form.password_again.data:
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
-                                   form=form, message='Пароли не совпадают', footer_register=True)
+                                   form=form, message='Пароли не совпадают', footer_register=True,
+                                   search_form=search_form)
         response = requests.get(f'http://{HOST}:{PORT}/api/users/{API_KEY}').json()
         logins, emails = False, False
         for user in response['users']:
@@ -99,11 +102,13 @@ def register():
         if logins:
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
-                                   form=form, message='Такой логин уже занят!', footer_register=True)
+                                   form=form, message='Такой логин уже занят!', footer_register=True,
+                                   search_form=search_form)
         if emails:
             return render_template('register.html', title=title, get_nav=False,
                                    get_password=True, heading_h1=heading_h1,
-                                   form=form, message='Такая почта уже занята!', footer_register=True)
+                                   form=form, message='Такая почта уже занята!', footer_register=True,
+                                   search_form=search_form)
         if form.img.data:
             img = f"../avatars/{form.login.data}.png"
             with open(f'avatars/{form.login.data}.png', 'wb') as avatar:
@@ -118,7 +123,7 @@ def register():
                                                                          'img': img})
         return redirect('/login')
     return render_template('register.html', title=title, get_nav=False, heading_h1=heading_h1,
-                           get_password=True, form=form, footer_register=True)
+                           get_password=True, form=form, footer_register=True, search_form=search_form)
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -146,7 +151,8 @@ def login():
                                title=title,
                                heading_h1=heading_h1,
                                message="Неправильный логин или пароль",
-                               form=form)
+                               form=form,
+                               search_form=search_form)
     return render_template('login.html', title=title, heading_h1=heading_h1, get_nav=False, form=form,
                            search_form=search_form)
 
@@ -164,7 +170,8 @@ def return_avatar(filename):
 def add_post():
     if request.values.get('submit') == 'Искать':
         return redirect(f'/?search={request.values.get("search")}&submit=Искать')
-    form = AppSearch()
+    search_form = AppSearch()
+    form = AddPost()
     if flask.request.method == 'GET':
         try:
             if current_user.id:
@@ -172,14 +179,14 @@ def add_post():
                 avatar = f"../{response['user']['img']}"
         except Exception:
             avatar = "../static/img/base_img.png"
-        return render_template('addpost.html', avatar=avatar, search_form=form)
+        return render_template('addpost.html', avatar=avatar, search_form=search_form, form=form)
     elif flask.request.method == "POST":
         print(flask.request.values.get('img'), flask.request.values.get('tags'))
-        requests.post(f'http://{HOST}:{PORT}/api/posts/{API_KEY}', json={'title': flask.request.values.get('title'),
+        requests.post(f'http://{HOST}:{PORT}/api/posts/{API_KEY}', json={'title': form.title.data,
                                                                          'content':
-                                                                             flask.request.values.get('content'),
-                                                                         'img': flask.request.values.get('img'),
-                                                                         'tags': flask.request.values.get('tags'),
+                                                                             form.content.data,
+                                                                         'img': form.image.data,
+                                                                         'tags': form.tags.data,
                                                                          'user': current_user.name,
                                                                          'user_id': current_user.id})
         return redirect('/')
@@ -189,6 +196,7 @@ def add_post():
 def ppost(s):
     if request.values.get('submit') == 'Искать':
         return redirect(f'/?search={request.values.get("search")}&submit=Искать')
+    search_form = AppSearch()
     posts = requests.get(f'http://{HOST}:{PORT}/api/posts/{s}/{API_KEY}').json()
     name = requests.get(f'http://{HOST}:{PORT}/api/users/{posts["post"]["user_id"]}/{API_KEY}').json()
     try:
@@ -197,14 +205,16 @@ def ppost(s):
             avatar = f"../{response['user']['img']}"
     except Exception:
         avatar = "../static/img/base_img.png"
-    return render_template('postt.html', a=posts['post'], username=name["user"]["login"], avatar=avatar)
+    return render_template('postt.html', a=posts['post'], username=name["user"]["login"], avatar=avatar,
+                           search_form=search_form)
 
 
-@app.route('/change_data', methods=['GET', 'POST'])
+@app.route('/change_data', methods=['GET', 'POST', 'PUT'])
 @login_required
 def change_data():
     if request.values.get('submit') == 'Искать':
         return redirect(f'/?search={request.values.get("search")}&submit=Искать')
+    search_form = AppSearch()
     title = 'Изменить данные аккаунта'
     heading_h1 = "Изменить данные аккаунта"
     form = RegisterForm()
@@ -235,7 +245,8 @@ def change_data():
             form.name.data = user['name']
             return render_template('settings.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
-                                   form=form, message='Такой логин уже занят!', footer_register=False, avatar=avatar)
+                                   form=form, message='Такой логин уже занят!', footer_register=False, avatar=avatar,
+                                   search_form=search_form)
         if emails:
             user = requests.get(f'http://{HOST}:{PORT}/api/users/{current_user.id}/{API_KEY}').json()['user']
             form.login.data = user['login']
@@ -244,19 +255,23 @@ def change_data():
             form.name.data = user['name']
             return render_template('settings.html', title=title, get_nav=False,
                                    get_password=False, heading_h1=heading_h1,
-                                   form=form, message='Такая почта уже занята!', footer_register=False, avatar=avatar)
+                                   form=form, message='Такая почта уже занята!', footer_register=False, avatar=avatar,
+                                   search_form=search_form)
         response = requests.put(f'http://{HOST}:{PORT}/api/users/{current_user.id}/{API_KEY}',
                                 json={'name': form.name.data, 'surname': form.surname.data, 'email': form.email.data,
                                       'login': form.login.data})
         return render_template('settings.html', title=title, flag=response.json()['success'], get_nav=False,
-                               get_password=False, form=form, footer_register=False, avatar=avatar)
+                               get_password=False, form=form, footer_register=False, avatar=avatar,
+                               search_form=search_form)
+    if request.method == 'PUT':
+        print(request.values)
     user = requests.get(f'http://{HOST}:{PORT}/api/users/{current_user.id}/{API_KEY}').json()['user']
     form.login.data = user['login']
     form.email.data = user['email']
     form.surname.data = user['surname']
     form.name.data = user['name']
     return render_template('settings.html', title=title, get_nav=False, heading_h1=heading_h1,
-                           get_password=False, form=form, footer_register=False, avatar=avatar)
+                           get_password=False, form=form, footer_register=False, avatar=avatar, search_form=search_form)
 
 
 @app.route('/whats_new')
@@ -272,7 +287,7 @@ def news_from_developers():
     except Exception:
         avatar = "../static/img/base_img.png"
     db_sess = db_session.create_session()
-    news = db_sess.query(DeveloperNews).all()
+    news = reversed(db_sess.query(DeveloperNews).all())
     db_sess.close()
     search_form = AppSearch()
     return render_template('news_develop.html', title=title, get_nav=True, heading_h1=heading_h1, avatar=avatar,
@@ -325,6 +340,37 @@ def delete_post(post_id):
     return redirect('/')
 
 
+@app.route('/change_post/<int:post_id>', methods=['GET', 'POST'])
+@login_required
+def change_post(post_id):
+    if request.values.get('submit') == 'Искать':
+        return redirect(f'/?search={request.values.get("search")}&submit=Искать')
+    form = AddPost()
+    search_form = AppSearch()
+    title = 'Изменить пост'
+    try:
+        if current_user.id:
+            response = requests.get(f'http://{HOST}:{PORT}/api/users/{current_user.id}/{API_KEY}').json()
+            avatar = f"../{response['user']['img']}"
+    except Exception:
+        avatar = "../static/img/base_img.png"
+    if request.method == 'GET':
+        post = requests.get(f'http://{HOST}:{PORT}/api/posts/{post_id}/{API_KEY}').json()['post']
+        form.title.data = post['title']
+        form.content.data = post['content']
+        form.image.data = post['img']
+        form.tags.data = post['tags']
+        return render_template('addpost.html', title=title, get_nav=True, heading_h1=title, avatar=avatar,
+                               search_form=search_form, form=form)
+    requests.put(f"http://{HOST}:{PORT}/api/posts/{post_id}/{API_KEY}", json={
+        "title": form.title.data,
+        "content": form.content.data,
+        "img": form.image.data,
+        "tags": form.tags.data
+    })
+    return redirect('/')
+
+
 @app.route('/logout')
 @login_required
 def logout():
@@ -349,8 +395,10 @@ def main():
     api.add_resource(UsersListResource, '/api/users/<token>')
     api.add_resource(PostsResource, '/api/posts/<int:post_id>/<token>')
     api.add_resource(PostsListResource, '/api/posts/<token>')
-    app.run(host=HOST, port=PORT, debug=DEBUG)
-    # serve(app, host=HOST, port=PORT)  # Потом раскомментировать перед выпуском в мир
+    if DEBUG:
+        app.run(host=HOST, port=PORT, debug=DEBUG)
+    else:
+        serve(app, host=HOST, port=PORT)
 
 
 if __name__ == '__main__':

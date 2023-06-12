@@ -5,11 +5,11 @@
 {% for a in news %}
     <div class="card" style="width: 60%;">
       <div class="card-header">
-        Developers, {{ a.created_date }}
+        Developers
       </div>
       <div class="card-body" style="display: flex; flex-direction: column;">
-        <h5 class="card-title"><a href="/p/{{ a.id }}" style="color: #212529; text-decoration: None;">{{ a.title }}</a></h5>
-        <p class="card-text">{{ a.content }}</p>
+        <h5 class="card-title">{{ a.title }}</h5>
+        <div class="card-text">{{ a.content|safe }}</div>
       </div>
     </div>
 {% endfor %}

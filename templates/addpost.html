@@ -2,22 +2,43 @@
 
 {% block content %}
 <h1 class="heading">Добавить новый проект</h1>
-<form action="" method="POST" class="form row g-3">
+<form action="" method="POST" class="form row g-3" enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
         <div class="col-12">
             <p class="label">Название</p>
-            <input type="text" name="title" id="title" class="form-control" placeholder="Название">
+            {{ form.title(class="form-control", placeholder="Название") }}
+            {% for error in form.title.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
         </div>
         <div class="col-12">
             <p class="label">Описание</p>
-            <input type="text" name="content" id="content" class="form-control" placeholder="Описание">
+            {{ form.content(class="form-control", placeholder="Описание") }}
+            {% for error in form.content.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
         </div>
         <div class="col-12">
           <p class="label">Изображение (ссылка)</p>
-          <input type="text" name="img" id="img" class="form-control" placeholder="Ссылка на изображение">
+          {{ form.image(class="form-control", placeholder="Ссылка на изображение") }}
+            {% for error in form.image.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
         </div>
         <div class="col-12">
           <p class="label">Тэги (через ;)</p>
-          <input type="text" name="tags" id="tags" class="form-control" placeholder="Тэги">
+          {{ form.tags(class="form-control", placeholder="Тэги") }}
+            {% for error in form.tags.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
         </div>
         <button type="submit" class="btn btn-outline-dark">Опубликовать</button>
     </form>
