@@ -5,21 +5,30 @@ from forms.user import RegisterForm, LoginForm
 from forms.search import AppSearch
 from flask_restful import Api
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from flask_mail import Mail, Message
 from data import db_session
 from data.users import User
 from data.developers_news import DeveloperNews
 from data.user_resource import UsersResource, UsersListResource
 from data.post_resource import PostsResource, PostsListResource
-from config import SECRET_KEY, API_KEY, HOST, PORT, DEBUG, DATABASE
+from config import SECRET_KEY, API_KEY, HOST, PORT, DEBUG, DATABASE, MAIL_SERVER, MAIL_PORT, MAIL_PASSWORD, \
+    MAIL_USERNAME, MAIL_USE_SSL, MAIL_USE_TLS
 import requests
 import flask
 
 # Инициализация веб приложения
 app = Flask(__name__)
 api = Api(app)
+mail = Mail(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = SECRET_KEY
+app.config['MAIL_SERVER'] = MAIL_SERVER
+app.config['MAIL_PORT'] = MAIL_PORT
+app.config['MAIL_USERNAME'] = MAIL_USERNAME
+app.config['MAIL_PASSWORD'] = MAIL_PASSWORD
+app.config['MAIL_USE_TLS'] = MAIL_USE_TLS
+app.config['MAIL_USE_SSL'] = MAIL_USE_SSL
 
 
 @app.route('/')
@@ -156,9 +165,13 @@ def login():
     return render_template('login.html', title=title, heading_h1=heading_h1, get_nav=False, form=form,
                            search_form=search_form)
 
-@app.route('/password recovery')
+
+@app.route('/password_recovery')
 def password_recovery():
-    pass
+    message = Message('Hi', sender=MAIL_USERNAME, recipients=['glebbutovic@gmail.com'])
+    message.body = 'Hello, this is test email'
+    mail.send(message)
+    return 'Sent'
 
 
 @app.route('/avatars/<filename>')
