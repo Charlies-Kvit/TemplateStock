@@ -156,6 +156,10 @@ def login():
     return render_template('login.html', title=title, heading_h1=heading_h1, get_nav=False, form=form,
                            search_form=search_form)
 
+@app.route('/password recovery')
+def password_recovery():
+    pass
+
 
 @app.route('/avatars/<filename>')
 @login_required
