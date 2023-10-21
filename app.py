@@ -13,6 +13,7 @@ from data.post_resource import PostsResource, PostsListResource
 from config import SECRET_KEY, API_KEY, HOST, PORT, DEBUG, DATABASE
 import requests
 import flask
+import logging
 
 # Инициализация веб приложения
 app = Flask(__name__)
@@ -20,6 +21,9 @@ api = Api(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 app.config['SECRET_KEY'] = SECRET_KEY
+logging.basicConfig(filename='logs/logs.log', filemode='w')
+logger = logging.getLogger('waitress')
+logger.setLevel(logging.DEBUG)
 
 
 @app.route('/')
